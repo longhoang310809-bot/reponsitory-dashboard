@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Chi Tiêu</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #ff6b9d, #4dabf7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Thu nhập */
+        .income-section {
+            background: #1a1a1a;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(255, 107, 157, 0.1);
+        }
+
+        .income-input-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+
+        .income-input-group input {
+            flex: 1;
+            padding: 15px;
+            background: #2a2a2a;
+            border: 2px solid #ff6b9d;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+        }
+
+        .income-input-group input:focus {
+            outline: none;
+            box-shadow: 0 0 15px rgba(255, 107, 157, 0.5);
+        }
+
+        .balance-card {
+            background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #4dabf7;
+            text-align: center;
+        }
+
+        .balance-card h3 {
+            color: #4dabf7;
+            margin-bottom: 10px;
+        }
+
+        .balance-amount {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ff6b9d;
+        }
+
+        /* Thêm chi tiêu */
+        .expense-section {
+            background: #1a1a1a;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(77, 171, 247, 0.1);
+        }
+
+        .expense-section h2 {
+            color: #4dabf7;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+
+        input {
+            flex: 1;
+            padding: 12px;
+            background: #2a2a2a;
+            border: 2px solid #4dabf7;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        input::placeholder {
+            color: #666;
+        }
+
+        button {
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #ff6b9d, #ff8fab);
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(255, 107, 157, 0.5);
+        }
+
+        /* Danh mục tạm */
+        .temp-categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .temp-category {
+            background: #2a2a2a;
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: 1px solid #ff6b9d;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Bảng chi tiêu */
+        .expenses-list {
+            background: #1a1a1a;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .expenses-list h2 {
+            color: #ff6b9d;
+            margin-bottom: 20px;
+        }
+
+        .expense-item {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid #4dabf7;
+            transition: all 0.3s;
+        }
+
+        .expense-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 3px 15px rgba(77, 171, 247, 0.3);
+        }
+
+        .expense-info {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .expense-name {
+            font-weight: bold;
+            color: #4dabf7;
+        }
+
+        .expense-amount {
+            color: #ff6b9d;
+            font-size: 1.2rem;
+        }
+
+        .delete-btn {
+            background: #ff4757;
+            padding: 8px 15px;
+            font-size: 0.9rem;
+        }
+
+        .delete-btn:hover {
+            box-shadow: 0 3px 15px rgba(255, 71, 87, 0.5);
+        }
+
+        /* Biểu đồ */
+        .charts-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .chart-container {
+            background: #1a1a1a;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(255, 107, 157, 0.1);
+        }
+
+        .chart-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #4dabf7;
+        }
+
+        canvas {
+            max-width: 100%;
+            height: auto;
+        }
+
+        @media (max-width: 768px) {
+            .charts-section {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>💰 Dashboard Quản Lý Chi Tiêu</h1>
+
+        <!-- Thu nhập -->
+        <div class="income-section">
+            <div class="income-input-group">
+                <input type="number" id="incomeInput" placeholder="💵 Nhập thu nhập ban đầu" min="0">
+            </div>
+            <div class="balance-card">
+                <h3>💰 Số tiền còn lại</h3>
+                <div class="balance-amount" id="balanceDisplay">0 ₫</div>
+            </div>
+        </div>
+
+        <!-- Thêm chi tiêu -->
+        <div class="expense-section">
+            <h2>📝 Thêm Chi Tiêu</h2>
+            <div class="input-group">
+                <input type="text" id="categoryInput" placeholder="📌 Tên danh mục (vd: Ăn uống, Game)">
+                <button onclick="addCategory()">✅</button>
+            </div>
+            <div class="temp-categories" id="tempCategories"></div>
+        </div>
+
+        <!-- Bảng chi tiêu -->
+        <div class="expenses-list">
+            <h2>📊 Chi Tiêu Đã Lưu</h2>
+            <div id="expensesList"></div>
+        </div>
+
+        <!-- Biểu đồ -->
+        <div class="charts-section">
+            <div class="chart-container">
+                <h2>🍰 Biểu Đồ Tròn</h2>
+                <canvas id="pieChart" width="400" height="400"></canvas>
+            </div>
+            <div class="chart-container">
+                <h2>📊 Biểu Đồ Cột</h2>
+                <canvas id="barChart" width="400" height="400"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dữ liệu
+        let income = 0;
+        let balance = 0;
+        let tempCategories = [];
+        let expenses = [];
+
+        // Màu cho biểu đồ
+        const colors = ['#ff6b9d', '#4dabf7', '#ff8fab', '#74c0fc', '#ffa5c0', '#a5d8ff'];
+
+        // Khởi tạo
+        document.getElementById('incomeInput').addEventListener('change', function() {
+            const value = parseFloat(this.value);
+            if (value >= 0) {
+                income = value;
+                balance = value;
+                expenses = [];
+                tempCategories = [];
+                updateUI();
+            }
+        });
+
+        // Thêm danh mục
+        function addCategory() {
+            const input = document.getElementById('categoryInput');
+            const name = input.value.trim();
+            
+            if (name) {
+                tempCategories.push({ name, amount: 0, hasAmount: false });
+                input.value = '';
+                renderTempCategories();
+            }
+        }
+
+        // Hiển thị danh mục tạm
+        function renderTempCategories() {
+            const container = document.getElementById('tempCategories');
+            container.innerHTML = '';
+            
+            tempCategories.forEach((cat, index) => {
+                const div = document.createElement('div');
+                div.className = 'temp-category';
+                
+                if (!cat.hasAmount) {
+                    div.innerHTML = `
+                        <span>📌 ${cat.name}</span>
+                        <input type="number" placeholder="💸 Số tiền" min="0" id="amount${index}" style="width: 120px;">
+                        <button onclick="saveExpense(${index})">✅</button>
+                    `;
+                } else {
+                    div.innerHTML = `<span>✓ ${cat.name}: ${formatMoney(cat.amount)}</span>`;
+                }
+                
+                container.appendChild(div);
+            });
+        }
+
+        // Lưu chi tiêu
+        function saveExpense(index) {
+            const amountInput = document.getElementById(`amount${index}`);
+            const amount = parseFloat(amountInput.value);
+            
+            if (!amount || amount <= 0) {
+                alert('Vui lòng nhập số tiền hợp lệ!');
+                return;
+            }
+            
+            if (amount > balance) {
+                alert('Không đủ tiền!');
+                return;
+            }
+            
+            const category = tempCategories[index];
+            category.amount = amount;
+            category.hasAmount = true;
+            
+            expenses.push({ ...category });
+            balance -= amount;
+            
+            tempCategories.splice(index, 1);
+            
+            updateUI();
+        }
+
+        // Xóa chi tiêu
+        function deleteExpense(index) {
+            balance += expenses[index].amount;
+            expenses.splice(index, 1);
+            updateUI();
+        }
+
+        // Cập nhật UI
+        function updateUI() {
+            document.getElementById('balanceDisplay').textContent = formatMoney(balance);
+            renderTempCategories();
+            renderExpenses();
+            drawCharts();
+        }
+
+        // Hiển thị danh sách chi tiêu
+        function renderExpenses() {
+            const container = document.getElementById('expensesList');
+            
+            if (expenses.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #666;">Chưa có chi tiêu nào</p>';
+                return;
+            }
+            
+            container.innerHTML = expenses.map((exp, index) => `
+                <div class="expense-item">
+                    <div class="expense-info">
+                        <span class="expense-name">📌 ${exp.name}</span>
+                        <span class="expense-amount">${formatMoney(exp.amount)}</span>
+                    </div>
+                    <button class="delete-btn" onclick="deleteExpense(${index})">🗑️ Xóa</button>
+                </div>
+            `).join('');
+        }
+
+        // Vẽ biểu đồ
+        function drawCharts() {
+            if (expenses.length === 0) {
+                clearCanvas('pieChart');
+                clearCanvas('barChart');
+                return;
+            }
+            
+            drawPieChart();
+            drawBarChart();
+        }
+
+        // Biểu đồ tròn
+        function drawPieChart() {
+            const canvas = document.getElementById('pieChart');
+            const ctx = canvas.getContext('2d');
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = 150;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const total = expenses.reduce((sum, exp) => sum + exp.amount, 0);
+            let currentAngle = -Math.PI / 2;
+            
+            expenses.forEach((exp, index) => {
+                const sliceAngle = (exp.amount / total) * 2 * Math.PI;
+                
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, radius, currentAngle, currentAngle + sliceAngle);
+                ctx.closePath();
+                ctx.fillStyle = colors[index % colors.length];
+                ctx.fill();
+                
+                // Thêm label
+                const labelAngle = currentAngle + sliceAngle / 2;
+                const labelX = centerX + Math.cos(labelAngle) * (radius + 40);
+                const labelY = centerY + Math.sin(labelAngle) * (radius + 40);
+                
+                ctx.fillStyle = '#fff';
+                ctx.font = '14px Arial';
+                ctx.textAlign = 'center';
+                const percent = ((exp.amount / total) * 100).toFixed(1);
+                ctx.fillText(`${exp.name} ${percent}%`, labelX, labelY);
+                
+                currentAngle += sliceAngle;
+            });
+        }
+
+        // Biểu đồ cột
+        function drawBarChart() {
+            const canvas = document.getElementById('barChart');
+            const ctx = canvas.getContext('2d');
+            const padding = 50;
+            const chartWidth = canvas.width - padding * 2;
+            const chartHeight = canvas.height - padding * 2;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const maxAmount = Math.max(...expenses.map(e => e.amount));
+            const barWidth = chartWidth / expenses.length - 20;
+            
+            expenses.forEach((exp, index) => {
+                const barHeight = (exp.amount / maxAmount) * chartHeight;
+                const x = padding + index * (chartWidth / expenses.length) + 10;
+                const y = canvas.height - padding - barHeight;
+                
+                ctx.fillStyle = colors[index % colors.length];
+                ctx.fillRect(x, y, barWidth, barHeight);
+                
+                // Label tên
+                ctx.fillStyle = '#fff';
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(exp.name, x + barWidth / 2, canvas.height - padding + 20);
+                
+                // Label số tiền
+                ctx.fillText(formatMoney(exp.amount), x + barWidth / 2, y - 10);
+            });
+        }
+
+        // Xóa canvas
+        function clearCanvas(id) {
+            const canvas = document.getElementById(id);
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#666';
+            ctx.font = '16px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('Chưa có dữ liệu', canvas.width / 2, canvas.height / 2);
+        }
+
+        // Format tiền
+        function formatMoney(amount) {
+            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+        }
+
+        // Khởi tạo ban đầu
+        updateUI();
+    </script>
+</body>
+</html>
